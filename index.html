@@ -9,12 +9,12 @@
 <body>
   <link href="https://fonts.googleapis.com/css?family=Julius+Sans+One|Marcellus|Raleway" rel="stylesheet">
 
-<svg class="board-grid hide-before-load" width="600" height="600" viewBox="0 0 600 600">
-  <path id="vertical1" d="m 200 0 0 600" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
-  <path id="vertical2" d="m 400 600 0 -600" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
-  <path id="horizontal1" d="m 0 200 600 0" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
-  <path id="horizontal2" d="m 600 400 -600 0" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
-</svg>
+  <svg class="board-grid hide-before-load" style="stroke-dasharray: 1000; stroke-dashoffset: 1000;" width="600" height="600" viewBox="0 0 600 600">
+    <path id="vertical1" d="m 200 0 0 600" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
+    <path id="vertical2" d="m 400 600 0 -600" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
+    <path id="horizontal1" d="m 0 200 600 0" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
+    <path id="horizontal2" d="m 600 400 -600 0" stroke="hsla(195, 58%, 31%, 1)" stroke-width="3"/>
+  </svg>
 <div class="board hide-before-load">
   <div class="board__square" id='0'><div class="board__square-shape">Yo,</div></div>
   <div class="board__square" id='1'><div class="board__square-shape">Come</div></div>
@@ -45,10 +45,10 @@
   <button class="message__button">Reset</button>
 </div>
   <script
-    src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js'>
+    src='https://cdn.jsdelivr.net/npm/kute.js@1.6.5/kute.min.js'>
   </script>
   <script
-    src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/DrawSVGPlugin.min.js'>
+    src='https://cdn.jsdelivr.net/npm/kute.js@1.6.5/kute-svg.js'>
   </script>
   <script  src="src/js/index.js"></script>
 
