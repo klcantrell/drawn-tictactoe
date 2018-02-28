@@ -1,15 +1,46 @@
 // polyfills for IE
-if (!Object.entries)
+if (!Object.entries) {
   Object.entries = function( obj ){
     let ownProps = Object.keys( obj ),
         i = ownProps.length,
         resArray = new Array(i); // preallocate the Array
     while (i--)
       resArray[i] = [ownProps[i], obj[ownProps[i]]];
-    
+
     return resArray;
   };
-// 
+}
+
+if (typeof Object.assign != 'function') {
+  // Must be writable: true, enumerable: false, configurable: true
+  Object.defineProperty(Object, "assign", {
+    value: function assign(target, varArgs) { // .length of function is 2
+      'use strict';
+      if (target == null) { // TypeError if undefined or null
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+
+      var to = Object(target);
+
+      for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+
+        if (nextSource != null) { // Skip over if undefined or null
+          for (var nextKey in nextSource) {
+            // Avoid bugs when hasOwnProperty is shadowed
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+      }
+      return to;
+    },
+    writable: true,
+    configurable: true
+  });
+}
+//
 
 const gameModel = {
   grid: [
@@ -128,7 +159,7 @@ const gameModel = {
         attackDirection = Object.entries(gridAnalysis).sort((a, b) => {
           return b[1] - a[1];
     })[0][0];
-    if (gridAnalysis.vertical === gridAnalysis.horizontal && 
+    if (gridAnalysis.vertical === gridAnalysis.horizontal &&
         gridAnalysis.vertical === gridAnalysis.diagonal) {
       attackDirection = 'none';
     }
@@ -148,18 +179,18 @@ const gameModel = {
 
 
 
-
 const gameController = {
   init: function() {
     gameView.init();
-    gameStartView.init();
-    gameEndView.init();
-    idleMessage.init();
-    chooseMessage.init();
+    gameStartPrompt.init();
+    gameStartPrompt.slideIn();
+    gameEndPrompt.init();
+    idlePrompt.init();
+    chooseAnotherPrompt.init();
   },
   startGame: function(e) {
     gameView.reset();
-    gameStartView.slideOut();
+    gameStartPrompt.slideOut();
     this.toggleGameInProgress();
     let playerShape = e.currentTarget.textContent;
     gameModel.player_data.shape = playerShape;
@@ -178,19 +209,19 @@ const gameController = {
     clearTimeout(gameController.idleTimeout);
   },
   showIdleMessage: function() {
-    idleMessage.slideIn();
+    idlePrompt.slideIn();
     gameModel.gameInProgress = false;
   },
   hideIdleMessage: function() {
-    idleMessage.slideOut();
+    idlePrompt.slideOut();
     gameModel.gameInProgress = true;
   },
   showChooseMessage: function() {
-    chooseMessage.slideIn();
+    chooseAnotherPrompt.slideIn();
     gameModel.gameInProgress = false;
   },
   hideChooseMessage: function() {
-    chooseMessage.slideOut();
+    chooseAnotherPrompt.slideOut();
     gameModel.gameInProgress = true;
   },
   toggleGameInProgress: function() {
@@ -232,9 +263,9 @@ const gameController = {
           gameController.endGame();
         } else {
           gameModel.turn = 'player';
-          gameController.processPlayerIdle(); 
+          gameController.processPlayerIdle();
         }
-      } 
+      }
     }, 700);
   },
   getMoveData: function() {
@@ -276,8 +307,8 @@ const gameController = {
   },
   endGame: function() {
     this.toggleGameInProgress();
-    gameEndView.setVerdictMessage();
-    gameEndView.slideIn();
+    gameEndPrompt.setMessage();
+    gameEndPrompt.slideIn();
   },
   setVerdict: function(turn) {
     gameModel.verdict = turn;
@@ -305,8 +336,8 @@ const gameController = {
       moves: 0
     };
     gameView.reset();
-    gameEndView.slideOut();
-    gameStartView.slideIn();
+    gameEndPrompt.slideOut();
+    gameStartPrompt.slideIn();
   },
   checkVerticalThreat: function() {
     let lastMove = gameModel.player_data.moveHistory[gameModel.player_data.moveHistory.length - 1];
@@ -626,8 +657,6 @@ const gameController = {
 
 
 
-
-
 const gameView = {
   init: function() {
     this.cacheDome();
@@ -715,120 +744,113 @@ const gameView = {
   }
 };
 
-const idleMessage = {
-  init: function() {
-    this.cacheDom();
-    this.bindEvents();
-  },
-  cacheDom: function() {
-    this.tips = document.getElementById("idle-message");
-    this.tipsButton = this.tips.querySelector("button");
-  },
-  bindEvents: function() {
-    this.tipsButton.addEventListener('click', function() {
-        gameController.processPlayerActive();
-        gameController.hideIdleMessage();
-      });
-  },
-  slideIn: function() {
-    setTimeout(function() {
-      idleMessage.tips.classList.add("message--slide-in"); 
-    }, 100);
-  },
-  slideOut: function() {
-    setTimeout(function() {
-      idleMessage.tips.classList.remove("message--slide-in"); 
-    }, 100);
-  }
-};
 
-const chooseMessage = {
-  init: function() {
-    this.cacheDom();
-    this.bindEvents();
-  },
-  cacheDom: function() {
-    this.choose = document.getElementById("choose-message");
-    this.chooseButton = this.choose.querySelector("button");
-  },
-  bindEvents: function() {
-    this.chooseButton.addEventListener('click', gameController.hideChooseMessage);
-  },
-  slideIn: function() {
-    setTimeout(function() {
-      chooseMessage.choose.classList.add("message--slide-in"); 
-    }, 100);
-  },
-  slideOut: function() {
-    setTimeout(function() {
-      chooseMessage.choose.classList.remove("message--slide-in"); 
-    }, 100);
-  }
-};
-
-const gameStartView = {
-  init: function() {
-    this.cacheDom();
-    this.bindEvents();
-    this.slideIn();
-  },
-  cacheDom: function() {
-    this.gameStart = document.getElementById("game-start");
-    this.gameStartButtons = this.gameStart.querySelectorAll("button");
-  },
-  bindEvents: function() {
-    // ARRAY.FROM NOT SUPPORT IN IE    
+const coreViewProps = (state) => {
+	let rootEl = state.root,
+  		buttonEl,
+      bindEvents;
+  if (state.buttons === 1) {
+    buttonEl = rootEl.querySelector("button"),
+    bindEvents = () => {
+      buttonEl.addEventListener('click', state.handler);
+    };
+  } else if (state.buttons === 2) {
+  	buttonEl = rootEl.querySelectorAll("button"),
+    bindEvents = () => {
+    // ARRAY.FROM NOT SUPPORT IN IE
     // let buttons = Array.from(this.gameStartButtons);
     // buttons.forEach((button) => {
     //   button.addEventListener('click', gameController.startGame.bind(gameController));
     // });
-    for (let i = 0, keys = Object.keys(this.gameStartButtons); i < keys.length; i++) {
-      this.gameStartButtons[keys[i]].addEventListener('click', gameController.startGame.bind(gameController));
-    }
-  },
-  slideIn: function() {
-    setTimeout(function() {
-      gameStartView.gameStart.classList.add("message--slide-in"); 
-    }, 100);
-  },
-  slideOut: function() {
-    setTimeout(function() {
-      gameStartView.gameStart.classList.remove("message--slide-in"); 
-    }, 100);
+      for (let i = 0, keys = Object.keys(buttonEl); i < keys.length; i++) {
+        buttonEl[keys[i]].addEventListener('click', state.handler);
+      }
+    };
   }
+  let
+  slideIn = () => {
+    setTimeout(() => {
+      rootEl.classList.add("message--slide-in");
+    }, 100);
+  },
+  slideOut = () => {
+    setTimeout(() => {
+      rootEl.classList.remove("message--slide-in");
+    }, 100);
+  };
+  return {
+  	init: function() {
+    	bindEvents();
+    },
+    slideIn: slideIn,
+    slideOut: slideOut
+  };
 };
 
-const gameEndView = {
-  init: function() {
-    this.cacheDom();
-    this.bindEvents();
-  },
-  cacheDom: function() {
-    this.gameEnd = document.getElementById("game-end");
-    this.resetButton = this.gameEnd.querySelector("button");
-    this.verdict = this.gameEnd.querySelector(".message__verdict");
-  },
-  bindEvents: function() {
-      this.resetButton.addEventListener('click', gameController.resetGame.bind(gameController));
-  },
-  setVerdictMessage: function() {
-    let verdictMessage = gameController.getVerdict() ? 
+const specialMessageProps = (state) => {
+	let messageEl = state.root.querySelector(state.messageEl);
+  return {
+  	setMessage: () => {
+    	let message = gameController.getVerdict() ?
                           `${gameController.getVerdict()} wins!` :
                            'draw!';
-    this.verdict.textContent = verdictMessage;
-  },
-  slideIn: function() {
-    setTimeout(function() {
-      gameEndView.gameEnd.classList.add("message--slide-in"); 
-    }, 100);
-  },
-  slideOut: function() {
-    setTimeout(function() {
-      gameEndView.gameEnd.classList.remove("message--slide-in"); 
-    }, 100);
-  }
+    	messageEl.textContent = message;
+    }
+  };
 };
 
+const gameStartPrompt = (() => {
+  let state = {
+    root: document.getElementById('game-start'),
+    buttons: 2,
+    handler: gameController.startGame.bind(gameController)
+  };
+  return Object.assign(
+    {},
+    coreViewProps(state)
+  );
+})();
+
+const idlePrompt = (() => {
+  let state = {
+    root: document.getElementById("idle-message"),
+    buttons: 1,
+    handler: () => {
+      gameController.processPlayerActive();
+      gameController.hideIdleMessage();
+    }
+  };
+  return Object.assign(
+    {},
+    coreViewProps(state)
+  );
+})();
+
+const chooseAnotherPrompt = (() => {
+  let state = {
+    root: document.getElementById('choose-message'),
+    buttons: 1,
+    handler: gameController.hideChooseMessage
+  };
+  return Object.assign(
+    {},
+    coreViewProps(state)
+  );
+})();
+
+const gameEndPrompt = (() => {
+  let state = {
+    root: document.getElementById('game-end'),
+    buttons: 1,
+    messageEl: '.message__verdict',
+    handler: gameController.resetGame
+  };
+  return Object.assign(
+    {},
+    coreViewProps(state),
+    specialMessageProps(state)
+  );
+})();
 
 
 gameController.init();
