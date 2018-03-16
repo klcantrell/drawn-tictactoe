@@ -1110,810 +1110,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_core_js_fn_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_core_js_fn_object_assign__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_core_js_fn_object_entries__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_core_js_fn_object_entries___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_core_js_fn_object_entries__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_kute_js__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_kute_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_kute_js__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_kute_js_kute_svg__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_kute_js_kute_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_kute_js_kute_svg__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__css_style_css__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__css_style_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__css_style_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_style_css__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__css_style_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__css_style_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gameController__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__cpuLogic__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__gameView__ = __webpack_require__(46);
 
 
 
 
 
 
-/*
-// polyfills for IE
-if (!Object.entries) {
-  Object.entries = function( obj ){
-    let ownProps = Object.keys( obj ),
-        i = ownProps.length,
-        resArray = new Array(i); // preallocate the Array
-    while (i--)
-      resArray[i] = [ownProps[i], obj[ownProps[i]]];
 
-    return resArray;
-  };
-}
+var gameController = Object(__WEBPACK_IMPORTED_MODULE_3__gameController__["a" /* default */])();
+var cpuLogic = Object(__WEBPACK_IMPORTED_MODULE_4__cpuLogic__["a" /* default */])(gameController);
+var gameView = Object(__WEBPACK_IMPORTED_MODULE_5__gameView__["a" /* default */])(gameController);
 
-if (typeof Object.assign != 'function') {
-  // Must be writable: true, enumerable: false, configurable: true
-  Object.defineProperty(Object, "assign", {
-    value: function assign(target, varArgs) { // .length of function is 2
-      'use strict';
-      if (target == null) { // TypeError if undefined or null
-        throw new TypeError('Cannot convert undefined or null to object');
-      }
-
-      var to = Object(target);
-
-      for (var index = 1; index < arguments.length; index++) {
-        var nextSource = arguments[index];
-
-        if (nextSource != null) { // Skip over if undefined or null
-          for (var nextKey in nextSource) {
-            // Avoid bugs when hasOwnProperty is shadowed
-            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-              to[nextKey] = nextSource[nextKey];
-            }
-          }
-        }
-      }
-      return to;
-    },
-    writable: true,
-    configurable: true
-  });
-}
-// polyfills for IE end
-*/
-
-var gameModel = {
-  grid: ['', '', '', '', '', '', '', '', ''],
-  turn: 'player',
-  gameInProgress: false,
-  verdict: '',
-  player_data: {
-    shape: 'X',
-    moveHistory: [],
-    moves: 0
-  },
-  CPU_data: {
-    shape: 'O',
-    moveHistory: [],
-    moves: 0
-  },
-  CPU_makeMove: function CPU_makeMove() {
-    if (this.player_data.shape === 'X') {
-      return this.CPU_counter();
-    } else {
-      return this.CPU_attack();
-    }
-  },
-  CPU_counter: function CPU_counter() {
-    switch (this.player_data.moves) {
-      case 1:
-        return this.counter_1();
-      case 2:
-      case 3:
-      case 4:
-        return this.counter_2();
-    }
-  },
-  counter_1: function counter_1() {
-    var playerMoves = this.player_data.moveHistory;
-    switch (playerMoves[playerMoves.length - 1]) {
-      case 3:
-        return 5;
-      case 5:
-        return 3;
-      case 1:
-        return 7;
-      case 7:
-        return 1;
-      case 0:
-      case 2:
-      case 6:
-      case 8:
-        return 4;
-      case 4:
-        return 0;
-    }
-  },
-  counter_2: function counter_2() {
-    switch (true) {
-      case gameController.pursueVerticalWin().score > 1:
-        return this.CPU_attack();
-      case gameController.pursueHorizontalWin().score > 1:
-        return this.CPU_attack();
-      case gameController.pursueDiagonalWin().score > 1:
-        return this.CPU_attack();
-      case typeof gameController.checkDiagonalThreat() === 'number':
-        return gameController.checkDiagonalThreat();
-      case typeof gameController.checkVerticalThreat() === 'number':
-        return gameController.checkVerticalThreat();
-      case typeof gameController.checkHorizontalThreat() === 'number':
-        return gameController.checkHorizontalThreat();
-      default:
-        return this.CPU_attack();
-    }
-  },
-  counterBeforeAttack: function counterBeforeAttack() {
-    switch (true) {
-      case gameController.pursueVerticalWin().score > 1:
-        return this.attack_2();
-      case gameController.pursueHorizontalWin().score > 1:
-        return this.attack_2();
-      case gameController.pursueDiagonalWin().score > 1:
-        return this.attack_2();
-      case typeof gameController.checkDiagonalThreat() === 'number':
-        return gameController.checkDiagonalThreat();
-      case typeof gameController.checkVerticalThreat() === 'number':
-        return gameController.checkVerticalThreat();
-      case typeof gameController.checkHorizontalThreat() === 'number':
-        return gameController.checkHorizontalThreat();
-    }
-  },
-  CPU_attack: function CPU_attack() {
-    switch (this.CPU_data.moves) {
-      case 0:
-        return 4;
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-        if (typeof this.counterBeforeAttack() === 'number') {
-          return this.counterBeforeAttack();
-        } else {
-          return this.attack_2();
-        }
-    }
-  },
-  attack_1: function attack_1() {
-    return gameController.getRandomEmptySquare();
-  },
-  attack_2: function attack_2() {
-    var gridAnalysis = {
-      vertical: gameController.pursueVerticalWin().score,
-      horizontal: gameController.pursueHorizontalWin().score,
-      diagonal: gameController.pursueDiagonalWin().score
-    },
-        attackDirection = Object.entries(gridAnalysis).sort(function (a, b) {
-      return b[1] - a[1];
-    })[0][0];
-    if (gridAnalysis.vertical === gridAnalysis.horizontal && gridAnalysis.vertical === gridAnalysis.diagonal) {
-      attackDirection = 'none';
-    }
-    switch (attackDirection) {
-      case 'vertical':
-        return gameController.pursueVerticalWin().move;
-      case 'horizontal':
-        return gameController.pursueHorizontalWin().move;
-      case 'diagonal':
-        return gameController.pursueDiagonalWin().move;
-      default:
-        return this.attack_1();
-    }
-  }
-};
-
-var gameController = {
-  init: function init() {
-    gameView.init();
-    gameStartPrompt.init();
-    gameStartPrompt.slideIn();
-    gameEndPrompt.init();
-    idlePrompt.init();
-    chooseAnotherPrompt.init();
-  },
-  startGame: function startGame(e) {
-    gameView.reset();
-    gameStartPrompt.slideOut();
-    this.toggleGameInProgress();
-    var playerShape = e.currentTarget.textContent;
-    gameModel.player_data.shape = playerShape;
-    gameModel.CPU_data.shape = playerShape === 'X' ? 'O' : 'X';
-    if (gameModel.CPU_data.shape === 'X') {
-      gameModel.turn = "CPU";
-      this.processCPUMove();
-    } else {
-      this.processPlayerIdle();
-    }
-  },
-  processPlayerIdle: function processPlayerIdle() {
-    gameController.idleTimeout = setTimeout(gameController.showIdleMessage, 5000);
-  },
-  processPlayerActive: function processPlayerActive() {
-    clearTimeout(gameController.idleTimeout);
-  },
-  showIdleMessage: function showIdleMessage() {
-    idlePrompt.slideIn();
-    gameModel.gameInProgress = false;
-  },
-  hideIdleMessage: function hideIdleMessage() {
-    idlePrompt.slideOut();
-    gameModel.gameInProgress = true;
-  },
-  showChooseMessage: function showChooseMessage() {
-    chooseAnotherPrompt.slideIn();
-    gameModel.gameInProgress = false;
-  },
-  hideChooseMessage: function hideChooseMessage() {
-    chooseAnotherPrompt.slideOut();
-    gameModel.gameInProgress = true;
-  },
-  toggleGameInProgress: function toggleGameInProgress() {
-    gameModel.gameInProgress = gameModel.gameInProgress ? false : true;
-  },
-  processPlayerMove: function processPlayerMove(e) {
-    this.processPlayerActive();
-    if (gameModel.gameInProgress && gameModel.turn === 'player') {
-      var squareId = e.currentTarget.id;
-      if (gameModel.grid[squareId]) {
-        gameController.showChooseMessage();
-      } else {
-        this.registerPlayerMove(squareId);
-        this.processCPUMove();
-      }
-    }
-  },
-  registerPlayerMove: function registerPlayerMove(squareId) {
-    gameModel.player_data.moves++;
-    gameModel.player_data.moveHistory.push(parseInt(squareId));
-    gameModel.grid[squareId] = gameModel.player_data.shape;
-    gameView.render();
-    if (this.checkGameOver()) {
-      this.endGame();
-    }
-    gameModel.turn = 'CPU';
-  },
-  processCPUMove: function processCPUMove() {
-    setTimeout(function () {
-      if (gameModel.gameInProgress) {
-        var CPU_move = gameModel.CPU_makeMove();
-        gameModel.CPU_data.moves++;
-        gameModel.CPU_data.moveHistory.push(parseInt(CPU_move));
-        gameModel.grid[CPU_move] = gameModel.CPU_data.shape;
-        gameView.render();
-        if (gameController.checkGameOver()) {
-          gameController.endGame();
-        } else {
-          gameModel.turn = 'player';
-          gameController.processPlayerIdle();
-        }
-      }
-    }, 700);
-  },
-  getMoveData: function getMoveData() {
-    if (gameModel.turn === 'player') {
-      return gameModel.player_data;
-    } else {
-      return gameModel.CPU_data;
-    }
-  },
-  getGameInProgress: function getGameInProgress() {
-    return gameModel.gameInProgress;
-  },
-  getSquareData: function getSquareData(e) {
-    var squareId = e.currentTarget.id;
-    return gameModel.grid[squareId];
-  },
-  getCurrentTurn: function getCurrentTurn() {
-    return gameModel.turn;
-  },
-  checkGameOver: function checkGameOver() {
-    var gridAnalysis = {
-      vertical: gameController.pursueVerticalWin().score,
-      horizontal: gameController.pursueHorizontalWin().score,
-      diagonal: gameController.pursueDiagonalWin().score
-    },
-        highestScoreKey = Object.keys(gridAnalysis).reduce(function (a, b) {
-      return gridAnalysis[a] > gridAnalysis[b] ? a : b;
-    }),
-        isBoardFull = gameModel.grid.indexOf('') < 0 ? true : false;
-    switch (true) {
-      case gridAnalysis[highestScoreKey] === 3:
-        this.setVerdict(gameModel.turn);
-        return true;
-      case isBoardFull:
-        return true;
-      default:
-        return false;
-    }
-  },
-  endGame: function endGame() {
-    this.toggleGameInProgress();
-    gameEndPrompt.setMessage();
-    gameEndPrompt.slideIn();
-  },
-  setVerdict: function setVerdict(turn) {
-    gameModel.verdict = turn;
-  },
-  getVerdict: function getVerdict() {
-    return gameModel.verdict;
-  },
-  resetGame: function resetGame() {
-    gameModel.grid = ['', '', '', '', '', '', '', '', ''];
-    gameModel.verdict = '';
-    gameModel.turn = 'player';
-    gameModel.gameInProgress = false, gameModel.player_data = {
-      shape: 'X',
-      moveHistory: [],
-      moves: 0
-    };
-    gameModel.CPU_data = {
-      shape: 'O',
-      moveHistory: [],
-      moves: 0
-    };
-    gameView.reset();
-    gameEndPrompt.slideOut();
-    gameStartPrompt.slideIn();
-  },
-  checkVerticalThreat: function checkVerticalThreat() {
-    var lastMove = gameModel.player_data.moveHistory[gameModel.player_data.moveHistory.length - 1];
-    var diffsAgainstLastMove = gameModel.player_data.moveHistory.map(function (item) {
-      if (item !== lastMove) {
-        return lastMove - item;
-      } else {
-        return undefined;
-      }
-    });
-    var verticalThreatDiff = diffsAgainstLastMove.filter(function (diff) {
-      if (Math.abs(diff) === 3 || Math.abs(diff) === 6) {
-        return diff;
-      }
-    });
-    if (typeof verticalThreatDiff[0] === 'number' && !gameModel.grid[this.nullifyVerticalThreat(lastMove, verticalThreatDiff[0])]) {
-      return this.nullifyVerticalThreat(lastMove, verticalThreatDiff[0]);
-    } else {
-      return false;
-    }
-  },
-  nullifyVerticalThreat: function nullifyVerticalThreat(lastMove, diff) {
-    var threateningMoves = [lastMove, lastMove - diff];
-    var movesLtoG = threateningMoves.sort(function (a, b) {
-      return a - b;
-    });
-    switch (true) {
-      case (movesLtoG[0] === 0 || movesLtoG[0] === 1 || movesLtoG[0] === 2) && Math.abs(diff) === 3:
-        return movesLtoG[0] + 6;
-      case (movesLtoG[0] === 0 || movesLtoG[0] === 1 || movesLtoG[0] === 2) && Math.abs(diff) === 6:
-        return movesLtoG[0] + 3;
-      case (movesLtoG[0] === 3 || movesLtoG[0] === 4 || movesLtoG[0] === 5) && Math.abs(diff) === 3:
-        return movesLtoG[0] - 3;
-    }
-  },
-  checkHorizontalThreat: function checkHorizontalThreat() {
-    var lastMove = gameModel.player_data.moveHistory[gameModel.player_data.moveHistory.length - 1];
-    var sameRowMoves = gameModel.player_data.moveHistory.filter(function (item) {
-      if (item !== lastMove) {
-        switch (lastMove) {
-          case 0:
-          case 1:
-          case 2:
-            return item <= 2 && item >= 0;
-          case 3:
-          case 4:
-          case 5:
-            return item <= 5 && item >= 3;
-          case 6:
-          case 7:
-          case 8:
-            return item <= 8 && item >= 6;
-        }
-      }
-    });
-    var horizontalThreatDiff = typeof sameRowMoves[0] === 'number' ? sameRowMoves.map(function (item) {
-      return lastMove - item;
-    }) : false;
-    if (typeof horizontalThreatDiff[0] === 'number' && !gameModel.grid[this.nullifyHorizontalThreat(lastMove, horizontalThreatDiff[0])]) {
-      return this.nullifyHorizontalThreat(lastMove, horizontalThreatDiff[0]);
-    } else {
-      return false;
-    }
-  },
-  nullifyHorizontalThreat: function nullifyHorizontalThreat(lastMove, diff) {
-    var threateningMoves = [lastMove, lastMove - diff];
-    var movesLtoG = threateningMoves.sort(function (a, b) {
-      return a - b;
-    });
-    switch (true) {
-      case (movesLtoG[0] === 0 || movesLtoG[0] === 3 || movesLtoG[0] === 6) && Math.abs(diff) === 1:
-        return movesLtoG[0] + 2;
-      case (movesLtoG[0] === 0 || movesLtoG[0] === 3 || movesLtoG[0] === 6) && Math.abs(diff) === 2:
-        return movesLtoG[0] + 1;
-      case (movesLtoG[0] === 1 || movesLtoG[0] === 4 || movesLtoG[0] === 7) && Math.abs(diff) === 1:
-        return movesLtoG[0] - 1;
-    }
-  },
-  checkDiagonalThreat: function checkDiagonalThreat() {
-    var lastMove = gameModel.player_data.moveHistory[gameModel.player_data.moveHistory.length - 1];
-    var diagonalThreats = gameModel.player_data.moveHistory.filter(function (item) {
-      if (item !== lastMove) {
-        switch (lastMove) {
-          case 4:
-            return item === 2 || item === 6;
-          case 0:
-          case 8:
-            return item === 4 || item === 0 || item === 8;
-          case 2:
-          case 6:
-            return item === 4 || item === 2 || item === 6;
-        }
-      }
-    });
-    var diagonalThreatDiff = typeof diagonalThreats[0] === 'number' ? diagonalThreats.map(function (item) {
-      return lastMove - item;
-    }) : false;
-    if (typeof diagonalThreatDiff[0] === 'number' && !gameModel.grid[this.nullifyDiagonalThreat(lastMove, diagonalThreatDiff[0])]) {
-      return this.nullifyDiagonalThreat(lastMove, diagonalThreatDiff);
-    } else {
-      return false;
-    }
-  },
-  nullifyDiagonalThreat: function nullifyDiagonalThreat(lastMove, diff) {
-    var threateningMoves = [lastMove, lastMove - diff];
-    var movesLtoG = threateningMoves.sort(function (a, b) {
-      return a - b;
-    });
-    switch (true) {
-      case movesLtoG[0] === 4 && Math.abs(diff) === 2:
-        return 2;
-      case movesLtoG[0] === 4 && Math.abs(diff) === 4:
-        return 0;
-      case movesLtoG[0] === 0 && Math.abs(diff) === 4:
-        return 8;
-      case movesLtoG[0] === 0 && Math.abs(diff) === 8:
-        return 4;
-      case movesLtoG[0] === 2 && Math.abs(diff) === 2:
-        return 6;
-      case movesLtoG[0] === 4 && Math.abs(diff) === 6:
-        return 4;
-    }
-  },
-  getRandomEmptySquare: function getRandomEmptySquare() {
-    var emptySpots = [];
-    gameModel.grid.forEach(function (square, index) {
-      if (!square) {
-        emptySpots.push(index);
-      }
-    });
-    return emptySpots[this.randomIndexPicker(emptySpots.length)];
-  },
-  randomIndexPicker: function randomIndexPicker(lengthOfArray) {
-    return Math.floor(Math.random() * lengthOfArray);
-  },
-  pursueVerticalWin: function pursueVerticalWin() {
-    var columnData = this.analyzeColumns(),
-        potentialNextMoves = [];
-    if (columnData) {
-      columnData.column.forEach(function (gridIndex) {
-        if (!gameModel.grid[gridIndex]) {
-          potentialNextMoves.push(gridIndex);
-        }
-      });
-      if (columnData.score > 1) {
-        return { move: potentialNextMoves[0], score: columnData.score };
-      } else {
-        return { move: potentialNextMoves[this.randomIndexPicker(potentialNextMoves.length)], score: columnData.score };
-      }
-    } else {
-      return { score: -99 };
-    }
-  },
-  analyzeColumns: function analyzeColumns() {
-    var _this = this;
-
-    var columnScores = {
-      1: 0, 2: 0, 3: 0 },
-        col1 = [0, 3, 6],
-        col2 = [1, 4, 7],
-        col3 = [2, 5, 8];
-    col1.forEach(function (square) {
-      columnScores['1'] += _this.scoreSquare(gameModel.grid[square]);
-    });
-    col2.forEach(function (square) {
-      columnScores['2'] += _this.scoreSquare(gameModel.grid[square]);
-    });
-    col3.forEach(function (square) {
-      columnScores['3'] += _this.scoreSquare(gameModel.grid[square]);
-    });
-    var targetColumn = Object.entries(columnScores).sort(function (a, b) {
-      return b[1] - a[1];
-    })[0][0];
-    if (columnScores[targetColumn] > 1) {
-      switch (targetColumn) {
-        case '1':
-          return { column: col1, score: columnScores[targetColumn] };
-        case '2':
-          return { column: col2, score: columnScores[targetColumn] };
-        case '3':
-          return { column: col3, score: columnScores[targetColumn] };
-      }
-    } else {
-      return false;
-    }
-  },
-  pursueHorizontalWin: function pursueHorizontalWin() {
-    var rowData = this.analyzeRows(),
-        potentialNextMoves = [];
-    if (rowData) {
-      rowData.row.forEach(function (gridIndex) {
-        if (!gameModel.grid[gridIndex]) {
-          potentialNextMoves.push(gridIndex);
-        }
-      });
-      if (rowData.score > 1) {
-        return { move: potentialNextMoves[0], score: rowData.score };
-      } else {
-        return { move: potentialNextMoves[this.randomIndexPicker(potentialNextMoves.length)], score: rowData.score };
-      }
-    } else {
-      return { score: -99 };
-    }
-  },
-  analyzeRows: function analyzeRows() {
-    var _this2 = this;
-
-    var rowScores = {
-      1: 0, 2: 0, 3: 0 },
-        row1 = [0, 1, 2],
-        row2 = [3, 4, 5],
-        row3 = [6, 7, 8];
-    row1.forEach(function (square) {
-      rowScores['1'] += _this2.scoreSquare(gameModel.grid[square]);
-    });
-    row2.forEach(function (square) {
-      rowScores['2'] += _this2.scoreSquare(gameModel.grid[square]);
-    });
-    row3.forEach(function (square) {
-      rowScores['3'] += _this2.scoreSquare(gameModel.grid[square]);
-    });
-    var targetRow = Object.entries(rowScores).sort(function (a, b) {
-      return b[1] - a[1];
-    })[0][0];
-    if (rowScores[targetRow] > 1) {
-      switch (targetRow) {
-        case '1':
-          return { row: row1, score: rowScores[targetRow] };
-        case '2':
-          return { row: row2, score: rowScores[targetRow] };
-        case '3':
-          return { row: row3, score: rowScores[targetRow] };
-      }
-    } else {
-      return false;
-    }
-  },
-  pursueDiagonalWin: function pursueDiagonalWin() {
-    var diagData = this.analyzeDiagonals(),
-        potentialNextMoves = [];
-    if (diagData) {
-      diagData.diagonal.forEach(function (gridIndex) {
-        if (!gameModel.grid[gridIndex]) {
-          potentialNextMoves.push(gridIndex);
-        }
-      });
-      if (diagData.score > 1) {
-        return { move: potentialNextMoves[0], score: diagData.score };
-      } else {
-        return { move: potentialNextMoves[this.randomIndexPicker(potentialNextMoves.length)], score: diagData.score };
-      }
-    } else {
-      return { score: -99 };
-    }
-  },
-  analyzeDiagonals: function analyzeDiagonals() {
-    var _this3 = this;
-
-    var diagScores = {
-      1: 0, 2: 0 },
-        diag1 = [0, 4, 8],
-        diag2 = [2, 4, 6];
-    diag1.forEach(function (square) {
-      diagScores['1'] += _this3.scoreSquare(gameModel.grid[square]);
-    });
-    diag2.forEach(function (square) {
-      diagScores['2'] += _this3.scoreSquare(gameModel.grid[square]);
-    });
-    var targetDiag = Object.entries(diagScores).sort(function (a, b) {
-      return b[1] - a[1];
-    })[0][0];
-    if (diagScores[targetDiag] > 1) {
-      switch (targetDiag) {
-        case '1':
-          return { diagonal: diag1, score: diagScores[targetDiag] };
-        case '2':
-          return { diagonal: diag2, score: diagScores[targetDiag] };
-      }
-    } else {
-      return false;
-    }
-  },
-  scoreSquare: function scoreSquare(squareContent) {
-    var score = 0;
-    switch (squareContent) {
-      case gameModel.player_data.shape:
-        score -= 99;
-        break;
-      case gameModel.CPU_data.shape:
-        score++;
-        break;
-      default:
-        score = 0;
-        break;
-    }
-    return score;
-  }
-};
-
-var gameView = {
-  init: function init() {
-    this.cacheDome();
-    this.bindEvents();
-    this.drawBoardGrid();
-  },
-  cacheDome: function cacheDome() {
-    this.board = document.querySelector(".board");
-    this.board_grid = document.querySelector(".board-grid");
-    this.squares = this.board.getElementsByClassName("board__square");
-  },
-  bindEvents: function bindEvents() {
-    for (var i = 0; i < this.squares.length; i++) {
-      this.squares[i].addEventListener('click', gameController.processPlayerMove.bind(gameController));
-    }
-  },
-  drawBoardGrid: function drawBoardGrid() {
-    __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#vertical1', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 200 }).start();
-    __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#vertical2', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 400 }).start();
-    __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#horizontal1', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 600 }).start();
-    __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#horizontal2', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 800 }).start();
-    for (var i = 0; i < this.squares.length; i++) {
-      var square = this.squares[i];
-      var startTime = 200 * i;
-      __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.to(square.firstChild, { opacity: 1 }, { duration: 1000, delay: startTime }).start();
-    }
-    this.loadBoard();
-  },
-  loadBoard: function loadBoard() {
-    this.board.classList.remove("hide-before-load");
-    // IE does not support classlist on SVG
-    this.board_grid.style.visibility = 'visible';
-  },
-  getCurrentSquare: function getCurrentSquare(id) {
-    // ARRAY.FROM NOT SUPPORTED IN IE
-    // let squaresArray = Array.from(this.squares),
-    //     targetIndex = squaresArray.findIndex((item) => {
-    //   return item.id == id;
-    // });
-    var targetIndex = void 0;
-    for (var i = 0, keys = Object.keys(this.squares); i < keys.length; i++) {
-      if (this.squares[keys[i]].id == id) {
-        targetIndex = i;
-        break;
-      }
-    }
-    return this.squares[targetIndex];
-  },
-  render: function render() {
-    var moveData = gameController.getMoveData();
-    var square = this.getCurrentSquare(moveData.moveHistory[moveData.moveHistory.length - 1]);
-    square.firstChild.innerHTML = this.insertShape(square.id, moveData.shape);
-    this.drawShape(square.id, moveData.shape);
-  },
-  insertShape: function insertShape(id, shape) {
-    if (shape === 'X') {
-      return '<svg class="svg-X" style="stroke-dasharray: 110; stroke-dashoffset: 110;" width="75" height="75" viewBox="0 0 75 75">\n                <path id="diag_right' + id + '" d="m 0 0 75 75" stroke="hsla(9, 100%, 76%, 1)" stroke-width="2.5"/>\n                <path id="diag_left' + id + '" d="m 75 0 -75 75" stroke="hsla(9, 100%, 76%, 1)" stroke-width="2.5"/>\n              </svg>';
-    } else {
-      return '<svg class="svg-O" style="stroke-dasharray: 110; stroke-dashoffset: 110;" width="90" height="90" viewBox="3 0 21 21">\n                  <path id="circle' + id + '" d="m 13.455845,1.0098512 c -5.4054596,0.019625 -9.7717564,4.3583082 -9.7523971,9.6907208 0.019359,5.332414 4.4170437,9.63928 9.8225031,9.619655 5.40546,-0.01962 9.771757,-4.358308 9.752397,-9.690721 -0.01936,-5.3324135 -4.417044,-9.63927948 -9.822503,-9.6196548 z" fill="transparent" stroke="hsla(42, 100%, 76%, 1)" stroke-width="0.65"/>\n               </svg>';
-    }
-  },
-  drawShape: function drawShape(id, shape) {
-    if (shape === 'X') {
-      __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#diag_right' + id, { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500 }).start();
-      __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#diag_left' + id, { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 300 }).start();
-    } else {
-      __WEBPACK_IMPORTED_MODULE_2_kute_js___default.a.fromTo('#circle' + id, { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 1500 }).start();
-    }
-  },
-  reset: function reset() {
-    for (var i = 0; i < this.squares.length; i++) {
-      this.squares[i].firstChild.textContent = '';
-    }
-  }
-};
-
-var coreViewProps = function coreViewProps(state) {
-  var rootEl = state.root,
-      buttonEl = void 0,
-      bindEvents = void 0;
-  if (state.buttons === 1) {
-    buttonEl = rootEl.querySelector("button"), bindEvents = function bindEvents() {
-      buttonEl.addEventListener('click', state.handler);
-    };
-  } else if (state.buttons === 2) {
-    buttonEl = rootEl.querySelectorAll("button"), bindEvents = function bindEvents() {
-      // ARRAY.FROM NOT SUPPORT IN IE
-      // let buttons = Array.from(this.gameStartButtons);
-      // buttons.forEach((button) => {
-      //   button.addEventListener('click', gameController.startGame.bind(gameController));
-      // });
-      for (var i = 0, keys = Object.keys(buttonEl); i < keys.length; i++) {
-        buttonEl[keys[i]].addEventListener('click', state.handler);
-      }
-    };
-  }
-  var slideIn = function slideIn() {
-    setTimeout(function () {
-      rootEl.classList.add("message--slide-in");
-    }, 100);
-  },
-      slideOut = function slideOut() {
-    setTimeout(function () {
-      rootEl.classList.remove("message--slide-in");
-    }, 100);
-  };
-  return {
-    init: function init() {
-      bindEvents();
-    },
-    slideIn: slideIn,
-    slideOut: slideOut
-  };
-};
-
-var specialMessageProps = function specialMessageProps(state) {
-  var messageEl = state.root.querySelector(state.messageEl);
-  return {
-    setMessage: function setMessage() {
-      var message = gameController.getVerdict() ? gameController.getVerdict() + ' wins!' : 'draw!';
-      messageEl.textContent = message;
-    }
-  };
-};
-
-var gameStartPrompt = function () {
-  var state = {
-    root: document.getElementById('game-start'),
-    buttons: 2,
-    handler: gameController.startGame.bind(gameController)
-  };
-  return Object.assign({}, coreViewProps(state));
-}();
-
-var idlePrompt = function () {
-  var state = {
-    root: document.getElementById("idle-message"),
-    buttons: 1,
-    handler: function handler() {
-      gameController.processPlayerActive();
-      gameController.hideIdleMessage();
-    }
-  };
-  return Object.assign({}, coreViewProps(state));
-}();
-
-var chooseAnotherPrompt = function () {
-  var state = {
-    root: document.getElementById('choose-message'),
-    buttons: 1,
-    handler: gameController.hideChooseMessage
-  };
-  return Object.assign({}, coreViewProps(state));
-}();
-
-var gameEndPrompt = function () {
-  var state = {
-    root: document.getElementById('game-end'),
-    buttons: 1,
-    messageEl: '.message__verdict',
-    handler: gameController.resetGame
-  };
-  return Object.assign({}, coreViewProps(state), specialMessageProps(state));
-}();
-
-gameController.init();
+gameController.init({ view: gameView, cpuLogic: cpuLogic });
 
 /***/ }),
 /* 18 */
@@ -2320,6 +1533,715 @@ module.exports = function (isEntries) {
 
 /***/ }),
 /* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "style.css";
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = GameController;
+function GameController() {
+  var view = void 0,
+      cpuLogic = void 0;
+
+  return {
+    init: function init() {
+      var dependencies = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { view: '', cpuLogic: '' };
+
+      view = dependencies.view;
+      cpuLogic = dependencies.cpuLogic;
+
+      view.init();
+    },
+    startGame: function startGame(e) {
+      view.reset();
+      view.gamePrompts.gameStart.slideOut();
+      this.toggleGameInProgress();
+      var playerShape = e.currentTarget.textContent;
+      cpuLogic.player_data.shape = playerShape;
+      cpuLogic.CPU_data.shape = playerShape === 'X' ? 'O' : 'X';
+      if (cpuLogic.CPU_data.shape === 'X') {
+        cpuLogic.turn = "CPU";
+        this.processCPUMove();
+      } else {
+        this.processPlayerIdle();
+      }
+    },
+    processPlayerIdle: function processPlayerIdle() {
+      var _this = this;
+      _this.idleTimeout = setTimeout(_this.showIdleMessage, 5000);
+    },
+    processPlayerActive: function processPlayerActive() {
+      var _this = this;
+      clearTimeout(_this.idleTimeout);
+    },
+    showIdleMessage: function showIdleMessage() {
+      view.gamePrompts.idle.slideIn();
+      cpuLogic.gameInProgress = false;
+    },
+    hideIdleMessage: function hideIdleMessage() {
+      view.gamePrompts.idle.slideOut();
+      cpuLogic.gameInProgress = true;
+    },
+    showChooseMessage: function showChooseMessage() {
+      view.gamePrompts.chooseAnother.slideIn();
+      cpuLogic.gameInProgress = false;
+    },
+    hideChooseMessage: function hideChooseMessage() {
+      view.gamePrompts.chooseAnother.slideOut();
+      cpuLogic.gameInProgress = true;
+    },
+    toggleGameInProgress: function toggleGameInProgress() {
+      cpuLogic.gameInProgress = cpuLogic.gameInProgress ? false : true;
+    },
+    processPlayerMove: function processPlayerMove(e) {
+      this.processPlayerActive();
+      if (cpuLogic.gameInProgress && cpuLogic.turn === 'player') {
+        var squareId = e.currentTarget.id;
+        if (cpuLogic.grid[squareId]) {
+          this.showChooseMessage();
+        } else {
+          this.registerPlayerMove(squareId);
+          this.processCPUMove();
+        }
+      }
+    },
+    registerPlayerMove: function registerPlayerMove(squareId) {
+      cpuLogic.player_data.moves++;
+      cpuLogic.player_data.moveHistory.push(parseInt(squareId));
+      cpuLogic.grid[squareId] = cpuLogic.player_data.shape;
+      view.render();
+      if (this.checkGameOver()) {
+        this.endGame();
+      }
+      cpuLogic.turn = 'CPU';
+    },
+    processCPUMove: function processCPUMove() {
+      var _this2 = this;
+
+      setTimeout(function () {
+        if (cpuLogic.gameInProgress) {
+          var CPU_move = cpuLogic.CPU_makeMove();
+          cpuLogic.CPU_data.moves++;
+          cpuLogic.CPU_data.moveHistory.push(parseInt(CPU_move));
+          cpuLogic.grid[CPU_move] = cpuLogic.CPU_data.shape;
+          view.render();
+          if (_this2.checkGameOver()) {
+            _this2.endGame();
+          } else {
+            cpuLogic.turn = 'player';
+            _this2.processPlayerIdle();
+          }
+        }
+      }, 700);
+    },
+    getMoveData: function getMoveData() {
+      if (cpuLogic.turn === 'player') {
+        return cpuLogic.player_data;
+      } else {
+        return cpuLogic.CPU_data;
+      }
+    },
+    getGameInProgress: function getGameInProgress() {
+      return cpuLogic.gameInProgress;
+    },
+    getSquareData: function getSquareData(e) {
+      var squareId = e.currentTarget.id;
+      return cpuLogic.grid[squareId];
+    },
+    getCurrentTurn: function getCurrentTurn() {
+      return cpuLogic.turn;
+    },
+    checkGameOver: function checkGameOver() {
+      var gridAnalysis = {
+        vertical: this.pursueVerticalWin().score,
+        horizontal: this.pursueHorizontalWin().score,
+        diagonal: this.pursueDiagonalWin().score
+      };
+      var highestScoreKey = Object.keys(gridAnalysis).reduce(function (a, b) {
+        return gridAnalysis[a] > gridAnalysis[b] ? a : b;
+      });
+      var isBoardFull = cpuLogic.grid.indexOf('') < 0 ? true : false;
+
+      switch (true) {
+        case gridAnalysis[highestScoreKey] === 3:
+          this.setVerdict(cpuLogic.turn);
+          return true;
+        case isBoardFull:
+          return true;
+        default:
+          return false;
+      }
+    },
+    endGame: function endGame() {
+      this.toggleGameInProgress();
+      view.gamePrompts.gameEnd.setMessage();
+      view.gamePrompts.gameEnd.slideIn();
+    },
+    setVerdict: function setVerdict(turn) {
+      cpuLogic.verdict = turn;
+    },
+    getVerdict: function getVerdict() {
+      return cpuLogic.verdict;
+    },
+    resetGame: function resetGame() {
+      cpuLogic.grid = ['', '', '', '', '', '', '', '', ''];
+      cpuLogic.verdict = '';
+      cpuLogic.turn = 'player';
+      cpuLogic.gameInProgress = false, cpuLogic.player_data = {
+        shape: 'X',
+        moveHistory: [],
+        moves: 0
+      };
+      cpuLogic.CPU_data = {
+        shape: 'O',
+        moveHistory: [],
+        moves: 0
+      };
+      view.reset();
+      view.gamePrompts.gameEnd.slideOut();
+      view.gamePrompts.gameStart.slideIn();
+    },
+    checkVerticalThreat: function checkVerticalThreat() {
+      var lastMove = cpuLogic.player_data.moveHistory[cpuLogic.player_data.moveHistory.length - 1];
+      var diffsAgainstLastMove = cpuLogic.player_data.moveHistory.map(function (item) {
+        if (item !== lastMove) {
+          return lastMove - item;
+        } else {
+          return undefined;
+        }
+      });
+      var verticalThreatDiff = diffsAgainstLastMove.filter(function (diff) {
+        if (Math.abs(diff) === 3 || Math.abs(diff) === 6) {
+          return diff;
+        }
+      });
+      if (typeof verticalThreatDiff[0] === 'number' && !cpuLogic.grid[this.nullifyVerticalThreat(lastMove, verticalThreatDiff[0])]) {
+        return this.nullifyVerticalThreat(lastMove, verticalThreatDiff[0]);
+      } else {
+        return false;
+      }
+    },
+    nullifyVerticalThreat: function nullifyVerticalThreat(lastMove, diff) {
+      var threateningMoves = [lastMove, lastMove - diff];
+      var movesLtoG = threateningMoves.sort(function (a, b) {
+        return a - b;
+      });
+      switch (true) {
+        case (movesLtoG[0] === 0 || movesLtoG[0] === 1 || movesLtoG[0] === 2) && Math.abs(diff) === 3:
+          return movesLtoG[0] + 6;
+        case (movesLtoG[0] === 0 || movesLtoG[0] === 1 || movesLtoG[0] === 2) && Math.abs(diff) === 6:
+          return movesLtoG[0] + 3;
+        case (movesLtoG[0] === 3 || movesLtoG[0] === 4 || movesLtoG[0] === 5) && Math.abs(diff) === 3:
+          return movesLtoG[0] - 3;
+      }
+    },
+    checkHorizontalThreat: function checkHorizontalThreat() {
+      var lastMove = cpuLogic.player_data.moveHistory[cpuLogic.player_data.moveHistory.length - 1];
+      var sameRowMoves = cpuLogic.player_data.moveHistory.filter(function (item) {
+        if (item !== lastMove) {
+          switch (lastMove) {
+            case 0:
+            case 1:
+            case 2:
+              return item <= 2 && item >= 0;
+            case 3:
+            case 4:
+            case 5:
+              return item <= 5 && item >= 3;
+            case 6:
+            case 7:
+            case 8:
+              return item <= 8 && item >= 6;
+          }
+        }
+      });
+      var horizontalThreatDiff = typeof sameRowMoves[0] === 'number' ? sameRowMoves.map(function (item) {
+        return lastMove - item;
+      }) : false;
+      if (typeof horizontalThreatDiff[0] === 'number' && !cpuLogic.grid[this.nullifyHorizontalThreat(lastMove, horizontalThreatDiff[0])]) {
+        return this.nullifyHorizontalThreat(lastMove, horizontalThreatDiff[0]);
+      } else {
+        return false;
+      }
+    },
+    nullifyHorizontalThreat: function nullifyHorizontalThreat(lastMove, diff) {
+      var threateningMoves = [lastMove, lastMove - diff];
+      var movesLtoG = threateningMoves.sort(function (a, b) {
+        return a - b;
+      });
+      switch (true) {
+        case (movesLtoG[0] === 0 || movesLtoG[0] === 3 || movesLtoG[0] === 6) && Math.abs(diff) === 1:
+          return movesLtoG[0] + 2;
+        case (movesLtoG[0] === 0 || movesLtoG[0] === 3 || movesLtoG[0] === 6) && Math.abs(diff) === 2:
+          return movesLtoG[0] + 1;
+        case (movesLtoG[0] === 1 || movesLtoG[0] === 4 || movesLtoG[0] === 7) && Math.abs(diff) === 1:
+          return movesLtoG[0] - 1;
+      }
+    },
+    checkDiagonalThreat: function checkDiagonalThreat() {
+      var lastMove = cpuLogic.player_data.moveHistory[cpuLogic.player_data.moveHistory.length - 1];
+      var diagonalThreats = cpuLogic.player_data.moveHistory.filter(function (item) {
+        if (item !== lastMove) {
+          switch (lastMove) {
+            case 4:
+              return item === 2 || item === 6;
+            case 0:
+            case 8:
+              return item === 4 || item === 0 || item === 8;
+            case 2:
+            case 6:
+              return item === 4 || item === 2 || item === 6;
+          }
+        }
+      });
+      var diagonalThreatDiff = typeof diagonalThreats[0] === 'number' ? diagonalThreats.map(function (item) {
+        return lastMove - item;
+      }) : false;
+      if (typeof diagonalThreatDiff[0] === 'number' && !cpuLogic.grid[this.nullifyDiagonalThreat(lastMove, diagonalThreatDiff[0])]) {
+        return this.nullifyDiagonalThreat(lastMove, diagonalThreatDiff);
+      } else {
+        return false;
+      }
+    },
+    nullifyDiagonalThreat: function nullifyDiagonalThreat(lastMove, diff) {
+      var threateningMoves = [lastMove, lastMove - diff];
+      var movesLtoG = threateningMoves.sort(function (a, b) {
+        return a - b;
+      });
+      switch (true) {
+        case movesLtoG[0] === 4 && Math.abs(diff) === 2:
+          return 2;
+        case movesLtoG[0] === 4 && Math.abs(diff) === 4:
+          return 0;
+        case movesLtoG[0] === 0 && Math.abs(diff) === 4:
+          return 8;
+        case movesLtoG[0] === 0 && Math.abs(diff) === 8:
+          return 4;
+        case movesLtoG[0] === 2 && Math.abs(diff) === 2:
+          return 6;
+        case movesLtoG[0] === 4 && Math.abs(diff) === 6:
+          return 4;
+      }
+    },
+    getRandomEmptySquare: function getRandomEmptySquare() {
+      var emptySpots = [];
+      cpuLogic.grid.forEach(function (square, index) {
+        if (!square) {
+          emptySpots.push(index);
+        }
+      });
+      return emptySpots[this.randomIndexPicker(emptySpots.length)];
+    },
+    randomIndexPicker: function randomIndexPicker(lengthOfArray) {
+      return Math.floor(Math.random() * lengthOfArray);
+    },
+    pursueVerticalWin: function pursueVerticalWin() {
+      var columnData = this.analyzeColumns(),
+          potentialNextMoves = [];
+      if (columnData) {
+        columnData.column.forEach(function (gridIndex) {
+          if (!cpuLogic.grid[gridIndex]) {
+            potentialNextMoves.push(gridIndex);
+          }
+        });
+        if (columnData.score > 1) {
+          return { move: potentialNextMoves[0], score: columnData.score };
+        } else {
+          return { move: potentialNextMoves[this.randomIndexPicker(potentialNextMoves.length)], score: columnData.score };
+        }
+      } else {
+        return { score: -99 };
+      }
+    },
+    analyzeColumns: function analyzeColumns() {
+      var _this3 = this;
+
+      var columnScores = {
+        1: 0, 2: 0, 3: 0 },
+          col1 = [0, 3, 6],
+          col2 = [1, 4, 7],
+          col3 = [2, 5, 8];
+      col1.forEach(function (square) {
+        columnScores['1'] += _this3.scoreSquare(cpuLogic.grid[square]);
+      });
+      col2.forEach(function (square) {
+        columnScores['2'] += _this3.scoreSquare(cpuLogic.grid[square]);
+      });
+      col3.forEach(function (square) {
+        columnScores['3'] += _this3.scoreSquare(cpuLogic.grid[square]);
+      });
+      var targetColumn = Object.entries(columnScores).sort(function (a, b) {
+        return b[1] - a[1];
+      })[0][0];
+      if (columnScores[targetColumn] > 1) {
+        switch (targetColumn) {
+          case '1':
+            return { column: col1, score: columnScores[targetColumn] };
+          case '2':
+            return { column: col2, score: columnScores[targetColumn] };
+          case '3':
+            return { column: col3, score: columnScores[targetColumn] };
+        }
+      } else {
+        return false;
+      }
+    },
+    pursueHorizontalWin: function pursueHorizontalWin() {
+      var rowData = this.analyzeRows(),
+          potentialNextMoves = [];
+      if (rowData) {
+        rowData.row.forEach(function (gridIndex) {
+          if (!cpuLogic.grid[gridIndex]) {
+            potentialNextMoves.push(gridIndex);
+          }
+        });
+        if (rowData.score > 1) {
+          return { move: potentialNextMoves[0], score: rowData.score };
+        } else {
+          return { move: potentialNextMoves[this.randomIndexPicker(potentialNextMoves.length)], score: rowData.score };
+        }
+      } else {
+        return { score: -99 };
+      }
+    },
+    analyzeRows: function analyzeRows() {
+      var _this4 = this;
+
+      var rowScores = {
+        1: 0, 2: 0, 3: 0 },
+          row1 = [0, 1, 2],
+          row2 = [3, 4, 5],
+          row3 = [6, 7, 8];
+      row1.forEach(function (square) {
+        rowScores['1'] += _this4.scoreSquare(cpuLogic.grid[square]);
+      });
+      row2.forEach(function (square) {
+        rowScores['2'] += _this4.scoreSquare(cpuLogic.grid[square]);
+      });
+      row3.forEach(function (square) {
+        rowScores['3'] += _this4.scoreSquare(cpuLogic.grid[square]);
+      });
+      var targetRow = Object.entries(rowScores).sort(function (a, b) {
+        return b[1] - a[1];
+      })[0][0];
+      if (rowScores[targetRow] > 1) {
+        switch (targetRow) {
+          case '1':
+            return { row: row1, score: rowScores[targetRow] };
+          case '2':
+            return { row: row2, score: rowScores[targetRow] };
+          case '3':
+            return { row: row3, score: rowScores[targetRow] };
+        }
+      } else {
+        return false;
+      }
+    },
+    pursueDiagonalWin: function pursueDiagonalWin() {
+      var diagData = this.analyzeDiagonals(),
+          potentialNextMoves = [];
+      if (diagData) {
+        diagData.diagonal.forEach(function (gridIndex) {
+          if (!cpuLogic.grid[gridIndex]) {
+            potentialNextMoves.push(gridIndex);
+          }
+        });
+        if (diagData.score > 1) {
+          return { move: potentialNextMoves[0], score: diagData.score };
+        } else {
+          return { move: potentialNextMoves[this.randomIndexPicker(potentialNextMoves.length)], score: diagData.score };
+        }
+      } else {
+        return { score: -99 };
+      }
+    },
+    analyzeDiagonals: function analyzeDiagonals() {
+      var _this5 = this;
+
+      var diagScores = {
+        1: 0, 2: 0 },
+          diag1 = [0, 4, 8],
+          diag2 = [2, 4, 6];
+      diag1.forEach(function (square) {
+        diagScores['1'] += _this5.scoreSquare(cpuLogic.grid[square]);
+      });
+      diag2.forEach(function (square) {
+        diagScores['2'] += _this5.scoreSquare(cpuLogic.grid[square]);
+      });
+      var targetDiag = Object.entries(diagScores).sort(function (a, b) {
+        return b[1] - a[1];
+      })[0][0];
+      if (diagScores[targetDiag] > 1) {
+        switch (targetDiag) {
+          case '1':
+            return { diagonal: diag1, score: diagScores[targetDiag] };
+          case '2':
+            return { diagonal: diag2, score: diagScores[targetDiag] };
+        }
+      } else {
+        return false;
+      }
+    },
+    scoreSquare: function scoreSquare(squareContent) {
+      var score = 0;
+      switch (squareContent) {
+        case cpuLogic.player_data.shape:
+          score -= 99;
+          break;
+        case cpuLogic.CPU_data.shape:
+          score++;
+          break;
+        default:
+          score = 0;
+          break;
+      }
+      return score;
+    }
+  };
+}
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = CpuLogic;
+function CpuLogic(controller) {
+  return {
+    grid: ['', '', '', '', '', '', '', '', ''],
+    turn: 'player',
+    gameInProgress: false,
+    verdict: '',
+    player_data: {
+      shape: 'X',
+      moveHistory: [],
+      moves: 0
+    },
+    CPU_data: {
+      shape: 'O',
+      moveHistory: [],
+      moves: 0
+    },
+    CPU_makeMove: function CPU_makeMove() {
+      if (this.player_data.shape === 'X') {
+        return this.CPU_counter();
+      } else {
+        return this.CPU_attack();
+      }
+    },
+    CPU_counter: function CPU_counter() {
+      switch (this.player_data.moves) {
+        case 1:
+          return this.counter_1();
+        case 2:
+        case 3:
+        case 4:
+          return this.counter_2();
+      }
+    },
+    counter_1: function counter_1() {
+      var playerMoves = this.player_data.moveHistory;
+      switch (playerMoves[playerMoves.length - 1]) {
+        case 3:
+          return 5;
+        case 5:
+          return 3;
+        case 1:
+          return 7;
+        case 7:
+          return 1;
+        case 0:
+        case 2:
+        case 6:
+        case 8:
+          return 4;
+        case 4:
+          return 0;
+      }
+    },
+    counter_2: function counter_2() {
+      switch (true) {
+        case controller.pursueVerticalWin().score > 1:
+          return this.CPU_attack();
+        case controller.pursueHorizontalWin().score > 1:
+          return this.CPU_attack();
+        case controller.pursueDiagonalWin().score > 1:
+          return this.CPU_attack();
+        case typeof controller.checkDiagonalThreat() === 'number':
+          return controller.checkDiagonalThreat();
+        case typeof controller.checkVerticalThreat() === 'number':
+          return controller.checkVerticalThreat();
+        case typeof controller.checkHorizontalThreat() === 'number':
+          return controller.checkHorizontalThreat();
+        default:
+          return this.CPU_attack();
+      }
+    },
+    counterBeforeAttack: function counterBeforeAttack() {
+      switch (true) {
+        case controller.pursueVerticalWin().score > 1:
+          return this.attack_2();
+        case controller.pursueHorizontalWin().score > 1:
+          return this.attack_2();
+        case controller.pursueDiagonalWin().score > 1:
+          return this.attack_2();
+        case typeof controller.checkDiagonalThreat() === 'number':
+          return controller.checkDiagonalThreat();
+        case typeof controller.checkVerticalThreat() === 'number':
+          return controller.checkVerticalThreat();
+        case typeof controller.checkHorizontalThreat() === 'number':
+          return controller.checkHorizontalThreat();
+      }
+    },
+    CPU_attack: function CPU_attack() {
+      switch (this.CPU_data.moves) {
+        case 0:
+          return 4;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+          if (typeof this.counterBeforeAttack() === 'number') {
+            return this.counterBeforeAttack();
+          } else {
+            return this.attack_2();
+          }
+      }
+    },
+    attack_1: function attack_1() {
+      return controller.getRandomEmptySquare();
+    },
+    attack_2: function attack_2() {
+      var gridAnalysis = {
+        vertical: controller.pursueVerticalWin().score,
+        horizontal: controller.pursueHorizontalWin().score,
+        diagonal: controller.pursueDiagonalWin().score
+      },
+          attackDirection = Object.entries(gridAnalysis).sort(function (a, b) {
+        return b[1] - a[1];
+      })[0][0];
+      if (gridAnalysis.vertical === gridAnalysis.horizontal && gridAnalysis.vertical === gridAnalysis.diagonal) {
+        attackDirection = 'none';
+      }
+      switch (attackDirection) {
+        case 'vertical':
+          return controller.pursueVerticalWin().move;
+        case 'horizontal':
+          return controller.pursueHorizontalWin().move;
+        case 'diagonal':
+          return controller.pursueDiagonalWin().move;
+        default:
+          return this.attack_1();
+      }
+    }
+  };
+}
+
+/***/ }),
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = GameView;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_kute_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_kute_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_kute_js__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_kute_js_kute_svg__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_kute_js_kute_svg___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_kute_js_kute_svg__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gamePrompts__ = __webpack_require__(48);
+
+
+
+
+function GameView(controller) {
+  return {
+    gamePrompts: Object(__WEBPACK_IMPORTED_MODULE_2__gamePrompts__["a" /* default */])(controller),
+    init: function init() {
+      this.cacheDome();
+      this.bindEvents();
+      this.drawBoardGrid();
+      this.gamePrompts.gameStart.init();
+      this.gamePrompts.gameStart.slideIn();
+      this.gamePrompts.gameEnd.init();
+      this.gamePrompts.idle.init();
+      this.gamePrompts.chooseAnother.init();
+    },
+    cacheDome: function cacheDome() {
+      this.board = document.querySelector(".board");
+      this.board_grid = document.querySelector(".board-grid");
+      this.squares = this.board.getElementsByClassName("board__square");
+    },
+    bindEvents: function bindEvents() {
+      for (var i = 0; i < this.squares.length; i++) {
+        this.squares[i].addEventListener('click', controller.processPlayerMove.bind(controller));
+      }
+    },
+    drawBoardGrid: function drawBoardGrid() {
+      __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#vertical1', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 200 }).start();
+      __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#vertical2', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 400 }).start();
+      __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#horizontal1', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 600 }).start();
+      __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#horizontal2', { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 800 }).start();
+      for (var i = 0; i < this.squares.length; i++) {
+        var square = this.squares[i];
+        var startTime = 200 * i;
+        __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.to(square.firstChild, { opacity: 1 }, { duration: 1000, delay: startTime }).start();
+      }
+      this.loadBoard();
+    },
+    loadBoard: function loadBoard() {
+      this.board.classList.remove("hide-before-load");
+      // IE does not support classlist on SVG
+      this.board_grid.style.visibility = 'visible';
+    },
+    getCurrentSquare: function getCurrentSquare(id) {
+      // ARRAY.FROM NOT SUPPORTED IN IE
+      // let squaresArray = Array.from(this.squares),
+      //     targetIndex = squaresArray.findIndex((item) => {
+      //   return item.id == id;
+      // });
+      var targetIndex = void 0;
+      for (var i = 0, keys = Object.keys(this.squares); i < keys.length; i++) {
+        if (this.squares[keys[i]].id == id) {
+          targetIndex = i;
+          break;
+        }
+      }
+      return this.squares[targetIndex];
+    },
+    render: function render() {
+      var moveData = controller.getMoveData();
+      var square = this.getCurrentSquare(moveData.moveHistory[moveData.moveHistory.length - 1]);
+      square.firstChild.innerHTML = this.insertShape(square.id, moveData.shape);
+      this.drawShape(square.id, moveData.shape);
+    },
+    insertShape: function insertShape(id, shape) {
+      if (shape === 'X') {
+        return '<svg class="svg-X" style="stroke-dasharray: 110; stroke-dashoffset: 110;" width="75" height="75" viewBox="0 0 75 75">\n                  <path id="diag_right' + id + '" d="m 0 0 75 75" stroke="hsla(9, 100%, 76%, 1)" stroke-width="2.5"/>\n                  <path id="diag_left' + id + '" d="m 75 0 -75 75" stroke="hsla(9, 100%, 76%, 1)" stroke-width="2.5"/>\n                </svg>';
+      } else {
+        return '<svg class="svg-O" style="stroke-dasharray: 110; stroke-dashoffset: 110;" width="90" height="90" viewBox="3 0 21 21">\n                    <path id="circle' + id + '" d="m 13.455845,1.0098512 c -5.4054596,0.019625 -9.7717564,4.3583082 -9.7523971,9.6907208 0.019359,5.332414 4.4170437,9.63928 9.8225031,9.619655 5.40546,-0.01962 9.771757,-4.358308 9.752397,-9.690721 -0.01936,-5.3324135 -4.417044,-9.63927948 -9.822503,-9.6196548 z" fill="transparent" stroke="hsla(42, 100%, 76%, 1)" stroke-width="0.65"/>\n                 </svg>';
+      }
+    },
+    drawShape: function drawShape(id, shape) {
+      if (shape === 'X') {
+        __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#diag_right' + id, { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500 }).start();
+        __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#diag_left' + id, { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 500, delay: 300 }).start();
+      } else {
+        __WEBPACK_IMPORTED_MODULE_0_kute_js___default.a.fromTo('#circle' + id, { draw: '0% 0%' }, { draw: '0% 100%' }, { duration: 1500 }).start();
+      }
+    },
+    reset: function reset() {
+      for (var i = 0; i < this.squares.length; i++) {
+        this.squares[i].firstChild.textContent = '';
+      }
+    }
+  };
+}
+
+/***/ }),
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* KUTE.js - The Light Tweening Engine
@@ -2744,10 +2666,108 @@ module.exports = function (isEntries) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16)))
 
 /***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 48 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = __webpack_require__.p + "style.css";
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = GamePrompts;
+function GamePrompts(controller) {
+  var coreProps = function coreProps(state) {
+    var rootEl = state.root,
+        buttonEl = void 0,
+        bindEvents = void 0;
+    if (state.buttons === 1) {
+      buttonEl = rootEl.querySelector("button"), bindEvents = function bindEvents() {
+        buttonEl.addEventListener('click', state.handler);
+      };
+    } else if (state.buttons === 2) {
+      buttonEl = rootEl.querySelectorAll("button"), bindEvents = function bindEvents() {
+        // ARRAY.FROM NOT SUPPORT IN IE
+        // let buttons = Array.from(this.gameStartButtons);
+        // buttons.forEach((button) => {
+        //   button.addEventListener('click', controller.startGame.bind(controller));
+        // });
+        for (var i = 0, keys = Object.keys(buttonEl); i < keys.length; i++) {
+          buttonEl[keys[i]].addEventListener('click', state.handler);
+        }
+      };
+    }
+    var slideIn = function slideIn() {
+      setTimeout(function () {
+        rootEl.classList.add("message--slide-in");
+      }, 100);
+    },
+        slideOut = function slideOut() {
+      setTimeout(function () {
+        rootEl.classList.remove("message--slide-in");
+      }, 100);
+    };
+    return {
+      init: function init() {
+        bindEvents();
+      },
+      slideIn: slideIn,
+      slideOut: slideOut
+    };
+  };
+
+  var specialMessageProps = function specialMessageProps(state) {
+    var messageEl = state.root.querySelector(state.messageEl);
+    return {
+      setMessage: function setMessage() {
+        var message = controller.getVerdict() ? controller.getVerdict() + " wins!" : 'draw!';
+        messageEl.textContent = message;
+      }
+    };
+  };
+
+  var gameStart = function () {
+    var state = {
+      root: document.getElementById('game-start'),
+      buttons: 2,
+      handler: controller.startGame.bind(controller)
+    };
+    return Object.assign({}, coreProps(state));
+  }();
+
+  var idle = function () {
+    var state = {
+      root: document.getElementById("idle-message"),
+      buttons: 1,
+      handler: function handler() {
+        controller.processPlayerActive();
+        controller.hideIdleMessage();
+      }
+    };
+    return Object.assign({}, coreProps(state));
+  }();
+
+  var chooseAnother = function () {
+    var state = {
+      root: document.getElementById('choose-message'),
+      buttons: 1,
+      handler: controller.hideChooseMessage
+    };
+    return Object.assign({}, coreProps(state));
+  }();
+
+  var gameEnd = function () {
+    var state = {
+      root: document.getElementById('game-end'),
+      buttons: 1,
+      messageEl: '.message__verdict',
+      handler: controller.resetGame
+    };
+    return Object.assign({}, coreProps(state), specialMessageProps(state));
+  }();
+
+  return {
+    gameStart: gameStart,
+    idle: idle,
+    chooseAnother: chooseAnother,
+    gameEnd: gameEnd
+  };
+}
 
 /***/ })
 /******/ ]);
