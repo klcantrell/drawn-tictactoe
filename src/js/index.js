@@ -1,46 +1,8 @@
-// polyfills for IE
-if (!Object.entries) {
-  Object.entries = function( obj ){
-    let ownProps = Object.keys( obj ),
-        i = ownProps.length,
-        resArray = new Array(i); // preallocate the Array
-    while (i--)
-      resArray[i] = [ownProps[i], obj[ownProps[i]]];
-
-    return resArray;
-  };
-}
-
-if (typeof Object.assign != 'function') {
-  // Must be writable: true, enumerable: false, configurable: true
-  Object.defineProperty(Object, "assign", {
-    value: function assign(target, varArgs) { // .length of function is 2
-      'use strict';
-      if (target == null) { // TypeError if undefined or null
-        throw new TypeError('Cannot convert undefined or null to object');
-      }
-
-      var to = Object(target);
-
-      for (var index = 1; index < arguments.length; index++) {
-        var nextSource = arguments[index];
-
-        if (nextSource != null) { // Skip over if undefined or null
-          for (var nextKey in nextSource) {
-            // Avoid bugs when hasOwnProperty is shadowed
-            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-              to[nextKey] = nextSource[nextKey];
-            }
-          }
-        }
-      }
-      return to;
-    },
-    writable: true,
-    configurable: true
-  });
-}
-// polyfills for IE end
+import 'core-js/fn/object/assign';
+import 'core-js/fn/object/entries';
+import KUTE from 'kute.js';
+import 'kute.js/kute-svg';
+import '../css/style.css';
 
 const gameModel = {
   grid: [
@@ -240,7 +202,6 @@ const gameController = {
     }
   },
   registerPlayerMove: function(squareId) {
-    console.log(`Player chose ${squareId}`);
     gameModel.player_data.moves++;
     gameModel.player_data.moveHistory.push(parseInt(squareId));
     gameModel.grid[squareId] = gameModel.player_data.shape;
@@ -254,7 +215,6 @@ const gameController = {
     setTimeout(function() {
       if (gameModel.gameInProgress) {
         let CPU_move = gameModel.CPU_makeMove();
-        console.log(`Computer chose ${CPU_move}`);
         gameModel.CPU_data.moves++;
         gameModel.CPU_data.moveHistory.push(parseInt(CPU_move));
         gameModel.grid[CPU_move] = gameModel.CPU_data.shape;
