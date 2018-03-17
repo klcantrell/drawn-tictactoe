@@ -1,33 +1,30 @@
 export default function GamePrompts(controller) {
   const coreProps = (state) => {
-  	let rootEl = state.root,
-    		buttonEl,
+  	const rootEl = state.root;
+    let	buttonEls,
         bindEvents;
+
     if (state.buttons === 1) {
-      buttonEl = rootEl.querySelector("button"),
+      buttonEls = rootEl.querySelector("button"),
       bindEvents = () => {
-        buttonEl.addEventListener('click', state.handler);
+        buttonEls.addEventListener('click', state.handler);
       };
     } else if (state.buttons === 2) {
-    	buttonEl = rootEl.querySelectorAll("button"),
+    	buttonEls = rootEl.querySelectorAll("button"),
       bindEvents = () => {
-      // ARRAY.FROM NOT SUPPORT IN IE
-      // let buttons = Array.from(this.gameStartButtons);
-      // buttons.forEach((button) => {
-      //   button.addEventListener('click', controller.startGame.bind(controller));
-      // });
-        for (let i = 0, keys = Object.keys(buttonEl); i < keys.length; i++) {
-          buttonEl[keys[i]].addEventListener('click', state.handler);
-        }
+        let buttons = Array.from(buttonEls);
+        buttons.forEach((button) => {
+          button.addEventListener('click', state.handler);
+        });
       };
     }
-    let
-    slideIn = () => {
+    const slideIn = () => {
       setTimeout(() => {
         rootEl.classList.add("message--slide-in");
       }, 100);
-    },
-    slideOut = () => {
+    };
+
+    const slideOut = () => {
       setTimeout(() => {
         rootEl.classList.remove("message--slide-in");
       }, 100);

@@ -1,5 +1,7 @@
 import 'core-js/fn/object/assign';
 import 'core-js/fn/object/entries';
+import 'core-js/fn/array/from';
+import 'core-js/fn/array/find-index';
 import '../css/style.css';
 import GameController from './gameController';
 import CpuLogic from './cpuLogic';
