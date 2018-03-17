@@ -46,7 +46,7 @@ module.exports = {
           options: {
             name: '[name].[ext]',
             outputPath: 'fonts/',
-            // publicPath: 'https://s3.us-east-2.amazonaws.com/kals-simon-game/'
+            publicPath: 'https://s3.us-east-2.amazonaws.com/kals-tictactoe-game/'
           }
         }
       }
