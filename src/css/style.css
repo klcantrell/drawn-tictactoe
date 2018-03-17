@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'Julius Sans One';
+  src: url('../fonts/JuliusSansOne-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Marcellus';
+  src: url('../fonts/Marcellus-Regular.ttf') format('truetype');
+}
+
 body {
   font-size: 18px;
   background: hsla(195, 30%, 50%, 1);
@@ -11,9 +21,8 @@ body {
 }
 
 .board {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Julius Sans One', serif;
   font-size: 2em;
-  font-weight: bold;
   color: hsla(195, 45%, 95%, 1);
   display: flex;
   margin: auto;
@@ -40,7 +49,7 @@ body {
 }
 
 .message {
-  font-family: 'Juluis Sans One', sans-serif;
+  font-family: 'Julius Sans One', sans-serif;
   color: hsla(229, 50%, 35%, 1);
   position: fixed;
   background: hsla(230, 48%, 85%, 1);
@@ -82,7 +91,7 @@ body {
 }
 
 .message__button {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Juluis Sans One', sans-serif;
   font-size: 1.5em;
   color: hsla(230, 54%, 95%, 1);
   text-transform: uppercase;
