@@ -1,6 +1,7 @@
 const path = require('path'),
       HtmlWebpackPlugin = require('html-webpack-plugin'),
-      CompressionPlugin = require('compression-webpack-plugin');
+      CompressionPlugin = require('compression-webpack-plugin'),
+      MinifyPlugin = require('babel-minify-webpack-plugin');
 
 module.exports = {
 	entry: {
@@ -36,7 +37,14 @@ module.exports = {
             }
           },
           'extract-loader',
-          'css-loader'
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              minimize: true
+            }
+          },
+          'postcss-loader'
         ]
       },
       {
@@ -46,7 +54,7 @@ module.exports = {
           options: {
             name: '[name].[ext]',
             outputPath: 'fonts/',
-            publicPath: 'https://s3.us-east-2.amazonaws.com/kals-tictactoe-game/'
+            publicPath: 'https://s3.us-east-2.amazonaws.com/kals-portfolio-assets/fonts'
           }
         }
       }
@@ -55,7 +63,17 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.html',
-      inject: false
+      minify: {
+        removeAttributeQuotes: true,
+        collapseWhitespace: true,
+        html5: true,
+        minifyCSS: true,
+        removeComments: true,
+        removeEmptyAttributes: true
+      }
+    }),
+    new MinifyPlugin({}, {
+      exclude: /node_modules/
     })
     // new CompressionPlugin({
     //   asset: "[path].gz[query]",
