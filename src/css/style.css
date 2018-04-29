@@ -104,6 +104,16 @@ body {
   margin-bottom: 5%;
 }
 
+.k-tag {
+  position: absolute;
+  font-family: Marcellus;
+  bottom: 0;
+  left: 0;
+  margin: 10px;
+  display: flex;
+  align-items: center;
+}
+
 @media screen and (max-width: 690px) {
   body {
     font-size: 14px;
