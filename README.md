@@ -12,7 +12,7 @@ User can:
 
 Tech Highlights:
 
-* Used an SVG animation library *KUTE.js* to draw the shapes
+* Used an SVG animation library **KUTE.js** to draw the shapes
 * Coded the CPU logic and strategy from stratch in vanilla JS
 
 #### Visit the site!
